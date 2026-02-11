@@ -20,6 +20,8 @@ def get_style_class(is_selected, is_reference, is_exg):
 enamldef ElectrodeSelectorContainer(Container):
 
     attr selector
+    attr requested_width = 500
+    attr requested_height = 500
 
     Container: container:
         StyleSheet:
@@ -66,7 +68,8 @@ enamldef ElectrodeSelectorContainer(Container):
                     value = 'LightSalmon'
 
         constraints = [
-            width == 600, height == 600,
+            width == requested_width,
+            height == requested_height,
             extra_buttons.bottom == ref_buttons.top,
             ref_buttons.bottom == container.bottom,
         ]
@@ -78,7 +81,7 @@ enamldef ElectrodeSelectorContainer(Container):
             padding = 0
             spacing = 0
             Label:
-                text = 'Extra'
+                text = 'Extra' if len(selector.extra) > 0 else ''
 
             Looper:
                 iterable << selector.extra[:]
@@ -124,7 +127,7 @@ enamldef ElectrodeSelectorContainer(Container):
             iterable << selector.coords.iterrows()
 
             ModifierButton:
-                text = str(loop_item[0])
+                text << str(loop_item[0])
 
                 hug_width = 'ignore'
                 hug_height = 'ignore'
@@ -135,7 +138,7 @@ enamldef ElectrodeSelectorContainer(Container):
                     (width == container.width * 0.095) | 'weak',
                     (height == container.height * 0.075) | 'weak',
                     left == (container.left + loop_item[1]['x_norm'] * (container.width - width)),
-                    top == ((container.top + loop_item[1]['y_norm'] * (container.height - 25 - 25 - height)) + 38),
+                    top == (container.top + loop_item[1]['y_norm'] * (container.height - height)) - 0.1 * container.height,
                 ]
 
                 clicked ::
